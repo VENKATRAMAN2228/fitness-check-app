@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Workouts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<h2>🏋️ Workouts</h2>
+
+<input type="date" id="workDate"><br><br>
+<input type="text" id="workText" placeholder="Example: Chest workout"><br><br>
+
+<button onclick="done()">✔ Done</button>
+<button onclick="notDone()">❌ Not Done</button>
+
+<ul id="workList"></ul>
+
+<a href="dashboard.html">⬅ Back</a>
+
+<script>
+  const user = localStorage.getItem("currentUser");
+  if (!user) window.location.href = "login.html";
+
+  const key = `fitness_${user}_workout`;
+
+  const workDate = document.getElementById("workDate");
+  const workText = document.getElementById("workText");
+  const list = document.getElementById("workList");
+
+  let saved = JSON.parse(localStorage.getItem(key)) || [];
+
+  saved.forEach(addToUI);
+
+  function done() {
+    addWorkout("✔ Done");
+  }
+
+  function notDone() {
+    addWorkout("❌ Not Done");
+  }
+
+  function addWorkout(status) {
+    const date = workDate.value;
+    const text = workText.value;
+
+    if (!date || !text) {
+      alert("Fill all fields");
+      return;
+    }
+
+    const entry = { date, text, status };
+    saved.push(entry);
+    localStorage.setItem(key, JSON.stringify(saved));
+    addToUI(entry);
+
+    workText.value = "";
+  }
+
+  function addToUI(entry) {
+    const li = document.createElement("li");
+    li.innerHTML = `${entry.date} - ${entry.text} (${entry.status})
+      <button onclick="deleteItem(this)">Delete</button>`;
+    list.appendChild(li);
+  }
+
+  function deleteItem(btn) {
+    const index = [...list.children].indexOf(btn.parentElement);
+    saved.splice(index, 1);
+    localStorage.setItem(key, JSON.stringify(saved));
+    btn.parentElement.remove();
+  }
+</script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  <h1>Fitness Dashboard</h1>
+  <h3>📊 Weekly Summary (Last 7 Days)</h3>
+<ul>
+  <li>🏃 Running: <span id="runCount">0</span></li>
+  <li>🏋️ Workouts Done: <span id="workCount">0</span></li>
+  <li>🥩 Protein Entries: <span id="proCount">0</span></li>
+</ul>
+
+
+  <ul>
+  <ul>
+  <li><a href="running.html">🏃 Running & Abs</a></li>
+  <li><a href="workout.html">🏋️ Workouts</a></li>
+  <li><a href="protein.html">🥩 Protein Intake</a></li>
+</ul>
+
+  </ul>
+
+  <button onclick="logout()">Logout</button>
+
+<script>
+  function logout() {
+    localStorage.removeItem("currentUser");
+    window.location.href = "login.html";
+  }
+
+  const user = localStorage.getItem("currentUser");
+  if (!user) window.location.href = "login.html";
+
+  function last7DaysCount(keyName, filterFn = null) {
+    const data = JSON.parse(localStorage.getItem(keyName)) || [];
+    const today = new Date();
+
+    return data.filter(item => {
+      const d = new Date(item.date);
+      const diff = (today - d) / (1000 * 60 * 60 * 24);
+      if (diff <= 7) {
+        return filterFn ? filterFn(item) : true;
+      }
+      return false;
+    }).length;
+  }
+
+  document.getElementById("runCount").innerText =
+    last7DaysCount(`fitness_${user}_running`);
+
+  document.getElementById("workCount").innerText =
+    last7DaysCount(`fitness_${user}_workout`, item => item.status === "✔ Done");
+
+  document.getElementById("proCount").innerText =
+    last7DaysCount(`fitness_${user}_protein`);
+
+
+</script>
+
+
+</body>
+</html>

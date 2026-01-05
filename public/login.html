@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Fitness Check</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+  <h2>Login / Signup</h2>
+
+  <input type="text" id="username" placeholder="Enter name"><br><br>
+  <input type="password" id="password" placeholder="Enter password"><br><br>
+
+  <button onclick="login()">Login</button>
+  <button onclick="signup()">Signup</button>
+
+  <p id="msg"></p>
+
+  <script>
+  function signup() {
+    const user = username.value.trim();
+    const pass = password.value.trim();
+
+    if (!user || !pass) {
+      msg.innerText = "Fill all fields";
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+
+    if (users[user]) {
+      msg.innerText = "User already exists";
+      return;
+    }
+
+    users[user] = { password: pass };
+    localStorage.setItem("users", JSON.stringify(users));
+
+    msg.innerText = "Signup successful. Now login.";
+  }
+
+  function login() {
+    const user = username.value.trim();
+    const pass = password.value.trim();
+
+    let users = JSON.parse(localStorage.getItem("users")) || {};
+
+    if (!users[user] || users[user].password !== pass) {
+      msg.innerText = "Invalid login";
+      return;
+    }
+
+    localStorage.setItem("currentUser", user);
+    window.location.href = "dashboard.html";
+  }
+</script>
+
+</body>
+</html>

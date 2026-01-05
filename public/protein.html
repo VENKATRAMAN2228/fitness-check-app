@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Protein Intake</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<h2>🥩 Protein Intake</h2>
+
+<input type="date" id="proDate"><br><br>
+<input type="text" id="proText" placeholder="Example: 120g protein"><br><br>
+
+<button onclick="addProtein()">Save</button>
+
+<ul id="proList"></ul>
+
+<a href="dashboard.html">⬅ Back</a>
+
+<script>
+  const user = localStorage.getItem("currentUser");
+  if (!user) window.location.href = "login.html";
+
+  const key = `fitness_${user}_protein`;
+
+  const proDate = document.getElementById("proDate");
+  const proText = document.getElementById("proText");
+  const list = document.getElementById("proList");
+
+  let saved = JSON.parse(localStorage.getItem(key)) || [];
+
+  saved.forEach(addToUI);
+
+  function addProtein() {
+    const date = proDate.value;
+    const text = proText.value;
+
+    if (!date || !text) {
+      alert("Fill all fields");
+      return;
+    }
+
+    const entry = { date, text };
+    saved.push(entry);
+    localStorage.setItem(key, JSON.stringify(saved));
+    addToUI(entry);
+
+    proText.value = "";
+  }
+
+  function addToUI(entry) {
+    const li = document.createElement("li");
+    li.innerHTML = `${entry.date} - ${entry.text}
+      <button onclick="deleteItem(this)">Delete</button>`;
+    list.appendChild(li);
+  }
+
+  function deleteItem(btn) {
+    const index = [...list.children].indexOf(btn.parentElement);
+    saved.splice(index, 1);
+    localStorage.setItem(key, JSON.stringify(saved));
+    btn.parentElement.remove();
+  }
+</script>
+
+
+</body>
+</html>

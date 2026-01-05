@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Running & Abs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<h2>🏃 Running & Abs</h2>
+<h3>📅 View by Date</h3>
+<input type="date" id="filterDate">
+<button onclick="filterByDate()">View</button>
+
+
+<input type="date" id="runDate"><br><br>
+<input type="text" id="runText" placeholder="Example: 5 km running"><br><br>
+
+<button onclick="addRun()">Save</button>
+
+<ul id="runList"></ul>
+
+<a href="dashboard.html">⬅ Back</a>
+
+<script>
+  const user = localStorage.getItem("currentUser");
+  if (!user) window.location.href = "login.html";
+
+  const key = `fitness_${user}_running`;
+
+  const runDate = document.getElementById("runDate");
+  const runText = document.getElementById("runText");
+  const list = document.getElementById("runList");
+
+  let saved = JSON.parse(localStorage.getItem(key)) || [];
+
+  saved.forEach(addToUI);
+
+  function addRun() {
+    const date = runDate.value;
+    const text = runText.value;
+
+    if (!date || !text) {
+      alert("Fill all fields");
+      return;
+    }
+
+    const entry = { date, text };
+    saved.push(entry);
+    localStorage.setItem(key, JSON.stringify(saved));
+    addToUI(entry);
+
+    runText.value = "";
+  }
+
+  function addToUI(entry) {
+    const li = document.createElement("li");
+    li.innerHTML = `${entry.date} - ${entry.text}
+      <button onclick="deleteItem(this)">Delete</button>`;
+    list.appendChild(li);
+  }
+
+  function deleteItem(btn) {
+    const index = [...list.children].indexOf(btn.parentElement);
+    saved.splice(index, 1);
+    localStorage.setItem(key, JSON.stringify(saved));
+    btn.parentElement.remove();
+  }
+  function filterByDate() {
+  const selectedDate = document.getElementById("filterDate").value;
+  list.innerHTML = "";
+
+  const filtered = saved.filter(item => item.date === selectedDate);
+
+  if (filtered.length === 0) {
+    list.innerHTML = "<li>No data for this date</li>";
+    return;
+  }
+
+  filtered.forEach(addToUI);
+}
+
+</script>
+
+
+
+</body>
+</html>
